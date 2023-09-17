@@ -9,6 +9,7 @@ import {
   GridColumnVisibilityModel,
   GridRowSelectionModel,
   GridPaginationModel,
+  GridRowParams,
 } from "@mui/x-data-grid";
 import { useFetchMedia } from "../../hooks/useFetchMedia";
 import { mediaSample, Media, tableSize } from "../../types";
@@ -26,6 +27,7 @@ export function FilteringDataGrid() {
     data,
     rowSelection,
     setRowSelection,
+    action,
   } = React.useContext(AppContext);
 
   function createHeadCell({
@@ -73,6 +75,18 @@ export function FilteringDataGrid() {
     setRowSelection(model);
   };
 
+  const isRowSelectable = (model: GridRowParams) => {
+    if (action === "encode") {
+      return model.row.permissions.ENCODE;
+    }
+
+    if (action === "rename") {
+      return model.row.permissions.RENAME;
+    }
+
+    return false;
+  };
+
   return (
     <div style={{ height: 1200, width: "100%" }}>
       <DataGrid
@@ -94,6 +108,7 @@ export function FilteringDataGrid() {
         }
         disableDensitySelector
         checkboxSelection
+        isRowSelectable={(params: GridRowParams) => isRowSelectable(params)}
         disableRowSelectionOnClick
         rowSelectionModel={rowSelection}
         onRowSelectionModelChange={(model) => handleRowSelectionChange(model)}

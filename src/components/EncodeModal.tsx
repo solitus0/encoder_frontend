@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import AppContext from "../../AppContext";
+import React, { useState } from "react";
+import AppContext from "../AppContext";
+import { usePreset } from "../hooks/usePreset";
 
 import {
   Button,
@@ -12,9 +13,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { Preset } from "../../types";
-
-import HdIcon from "@mui/icons-material/Hd";
+import { Preset } from "../types";
 
 function PresetInfo({ preset }: { preset: Preset | null }) {
   if (!preset) return null;
@@ -39,28 +38,20 @@ Video Quality: ${preset.VideoQualitySlider}
   );
 }
 
-function EncodeButton() {
-  const [open, setOpen] = useState(false);
-  const [presets, setPresets] = useState<Preset[]>([]);
+export function EncodeModal() {
   const [selectedPreset, setSelectedPreset] = useState<Preset | null>(null);
-  const { rowSelection } = React.useContext(AppContext);
+  const {
+    rowSelection,
+    presets,
+    openEncodeModal,
+    setOpenEncodeModal,
+    refreshQueued,
+    setRefreshQueued,
+  } = React.useContext(AppContext);
 
-  useEffect(() => {
-    const fetchPresets = async () => {
-      try {
-        const apiUrl = process.env.REACT_APP_API_URL;
-        const response = await fetch(apiUrl + "/api/presets");
-        const data: Preset[] = await response.json();
-        setPresets(data);
-      } catch (error) {
-        console.error("Error fetching presets:", error);
-      }
-    };
-    fetchPresets();
-  }, []);
+  usePreset();
+  const handleClose = () => setOpenEncodeModal(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const handleEncode = async () => {
     if (!selectedPreset || !rowSelection) return;
 
@@ -83,12 +74,15 @@ function EncodeButton() {
         const responseData = await response.json();
         console.error("Error encoding:", responseData);
       }
+
+      setRefreshQueued(!refreshQueued);
     } catch (error) {
       console.error("Network or other error:", error);
     }
 
     handleClose();
   };
+
   const handlePresetChange = (event: SelectChangeEvent<string>) => {
     const selected = presets.find((p) => p.PresetName === event.target.value);
     if (selected) {
@@ -98,19 +92,8 @@ function EncodeButton() {
 
   return (
     <>
-      <Button
-        color="primary"
-        onClick={handleOpen}
-        startIcon={<HdIcon />}
-        variant="contained"
-        size="large"
-        disabled={!rowSelection?.length}
-        fullWidth
-      >
-        Encode
-      </Button>
       <Modal
-        open={open}
+        open={openEncodeModal}
         onClose={handleClose}
         aria-labelledby="encode-modal-title"
       >
@@ -166,5 +149,3 @@ function EncodeButton() {
     </>
   );
 }
-
-export default EncodeButton;

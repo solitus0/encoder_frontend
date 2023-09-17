@@ -15,9 +15,13 @@ interface SSEMessage {
 
 const SSEComponent: React.FC = () => {
   const [message, setMessage] = useState<SSEMessage | null>(null);
-  const { setCurrentlyEncoding } = React.useContext(AppContext);
+  const { setCurrentlyEncoding, permissions } = React.useContext(AppContext);
 
   useEffect(() => {
+    if (!permissions.rabbitmq) {
+      return;
+    }
+
     const apiUrl = process.env.REACT_APP_API_URL;
     const eventSource = new EventSource(apiUrl + "/sse");
 
@@ -47,7 +51,7 @@ const SSEComponent: React.FC = () => {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [permissions]);
 
   return (
     <div>

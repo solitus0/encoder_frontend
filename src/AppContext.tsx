@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { PaginatedMedia, Setting, Permissions } from "./types";
+import { PaginatedMedia, Setting, Permissions, Preset, Encode } from "./types";
 
 const AppContext = createContext({
   directory: "",
@@ -24,6 +24,18 @@ const AppContext = createContext({
   setRowSelection: (rowSelection: any) => {},
   permissions: {} as Permissions,
   setPermissions: (permissions: Permissions) => {},
+  action: "",
+  setAction: (alignment: string) => {},
+  presets: [] as Preset[],
+  setPresets: (presets: Preset[]) => {},
+  openEncodeModal: false,
+  setOpenEncodeModal: (openEncodeModal: boolean) => {},
+  selectedActionIndex: 0,
+  setSelectedActionIndex: (actionIndex: number) => {},
+  encodes: [] as Encode[],
+  setEncodes: (encodes: Encode[]) => {},
+  refreshQueued: false,
+  setRefreshQueued: (refreshQueued: boolean) => {},
 });
 
 export default AppContext;

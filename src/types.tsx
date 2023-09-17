@@ -104,6 +104,8 @@ export interface Encode {
 
 export interface Permissions {
   scan: boolean;
+  encode: boolean;
   scan_path: boolean;
   temp_path: boolean;
+  rabbitmq: boolean;
 }
