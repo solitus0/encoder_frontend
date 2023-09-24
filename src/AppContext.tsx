@@ -36,6 +36,8 @@ const AppContext = createContext({
   setEncodes: (encodes: Encode[]) => {},
   refreshQueued: false,
   setRefreshQueued: (refreshQueued: boolean) => {},
+  refreshSettings: false,
+  setRefreshSettings: (refreshSettings: boolean) => {},
 });
 
 export default AppContext;

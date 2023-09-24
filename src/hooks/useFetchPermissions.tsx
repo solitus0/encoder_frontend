@@ -1,12 +1,9 @@
 import { useEffect } from "react";
 import axiosInstance from "./../axiosInstance";
-import { Setting } from "./../types";
 
-export function useFetchPermissions(settings: Setting[], setPermissions: any) {
+export function useFetchPermissions(setPermissions: any) {
   useEffect(() => {
     const fetchData = async () => {
-      if (!settings.length) return;
-
       try {
         const response = await axiosInstance.get(`/api/permissions`);
         if (response.status !== 200) {
@@ -20,5 +17,5 @@ export function useFetchPermissions(settings: Setting[], setPermissions: any) {
     };
 
     fetchData();
-  }, [settings]);
+  }, []);
 }

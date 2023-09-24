@@ -23,7 +23,7 @@ export default function ScanButton() {
     } finally {
       setPaginationModel((prev: GridPaginationModel) => ({
         pageSize: prev.pageSize,
-        page: 1,
+        page: 0,
       }));
 
       setLoading(false);

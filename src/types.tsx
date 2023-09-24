@@ -22,6 +22,10 @@ export interface PaginatedMedia {
 export interface Setting {
   key: string;
   value: string;
+  id?: number;
+  created_at?: string;
+  updated_at?: string;
+  valid?: boolean;
 }
 
 export interface HeadCell {

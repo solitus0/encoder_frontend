@@ -2,7 +2,6 @@ import React from "react";
 import { CssBaseline, ThemeProvider, createTheme, Grid } from "@mui/material";
 
 import ScanButton from "./components/Buttons/ScanButton";
-import Settings from "./DirectoryInput";
 import AppContext from "./AppContext";
 import SSEComponent from "./SSEComponent";
 import HealthCheck from "./components/HealthCheck";
@@ -21,6 +20,9 @@ import SplitButton from "./components/Buttons/ActionButton";
 import ClearQueueButton from "./components/Buttons/ClearQueueButton";
 import { useFetchPermissions } from "./hooks/useFetchPermissions";
 import { EncodeModal } from "./components/EncodeModal";
+import { DirComponent } from "./components/DirComponent";
+import { useSettings } from "./hooks/useSettings";
+
 const theme = createTheme();
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
   const [tempDirectory, setTempDirectory] = React.useState<string>("");
   const [currentlyEncoding, setCurrentlyEncoding] = React.useState<string>("");
   const [settings, setSettings] = React.useState<Setting[]>([]);
+  const [refreshSettings, setRefreshSettings] = React.useState<boolean>(false);
   const [rowSelection, setRowSelection] = React.useState<GridRowSelectionModel>(
     []
   );
@@ -87,7 +90,8 @@ function App() {
   const [encodes, setEncodes] = React.useState<Encode[]>([]);
   const [refreshQueued, setRefreshQueued] = React.useState<boolean>(false);
 
-  useFetchPermissions(settings, setPermissions);
+  useFetchPermissions(setPermissions);
+  useSettings(setSettings, refreshSettings);
 
   return (
     <AppContext.Provider
@@ -126,6 +130,8 @@ function App() {
         setEncodes,
         refreshQueued,
         setRefreshQueued,
+        refreshSettings,
+        setRefreshSettings,
       }}
     >
       <ThemeProvider theme={theme}>
@@ -135,11 +141,13 @@ function App() {
           <EncodeModal />
 
           <Grid container p={2} justifyContent={"space-between"}>
-            <Grid item xs={3}>
-              <ScanButton />
-            </Grid>
-            <Grid item xs={3}>
-              <ClearQueueButton />
+            <Grid container item xs={6} gap={1}>
+              <Grid item xs={3}>
+                <ScanButton />
+              </Grid>
+              <Grid item xs={3}>
+                <ClearQueueButton />
+              </Grid>
             </Grid>
             <Grid item xs={6}>
               <HealthCheck />
@@ -158,7 +166,16 @@ function App() {
 
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Settings />
+                <DirComponent
+                  title="Scan Paths"
+                  settingKey="scan_path"
+                  maxInputs={10}
+                />
+                <DirComponent
+                  title="Temp Paths"
+                  settingKey="temp_path"
+                  maxInputs={1}
+                />
               </Grid>
             </Grid>
           </Grid>
